@@ -1,6 +1,7 @@
 use clap::Parser;
 use regex::Regex;
-use std::io;
+
+use std::io::{self, BufRead};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -42,19 +43,19 @@ fn main() -> io::Result<()> {
     println!("from: {}", from);
     println!("to: {}", to);
     println!("from_to: {:?}", from_to);
-    // while let Some(line) = lines.next() {
-    //     let last_input = line.unwrap();
-    //     let split = re.split(&last_input);
-    //     for (i, e) in split.enumerate() {
-    //         if i < (from - 1) || i >= to {
-    //             continue;
-    //         }
-    //         if i != (from - 1) {
-    //             print!("{}", replacement);
-    //         }
-    //         print!("{}", e);
-    //     }
-    //     println!();
-    // }
+    for line in stdin.lock().lines() {
+        let last_input = line.unwrap();
+        let split = re.split(&last_input);
+        for (i, e) in split.enumerate() {
+            if i < (from - 1) || i >= to {
+                continue;
+            }
+            if i != (from - 1) {
+                print!("{}", replacement);
+            }
+            print!("{}", e);
+        }
+        println!();
+    }
     Ok(())
 }

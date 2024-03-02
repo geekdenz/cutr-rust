@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run cutr" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="command" value="run --package cutr --bin cutr -- -d , -f 1-3 -r E" />
+    <option name="command" value="run --package cutr --bin cutr -- -d ' +' -f 1-3 -r E" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />
     <option name="emulateTerminal" value="true" />
@@ -10,8 +10,8 @@
     <option name="withSudo" value="false" />
     <option name="buildTarget" value="REMOTE" />
     <option name="backtrace" value="SHORT" />
-    <option name="isRedirectInput" value="false" />
-    <option name="redirectInputPath" value="" />
+    <option name="isRedirectInput" value="true" />
+    <option name="redirectInputPath" value="$PROJECT_DIR$/input.ls" />
     <method v="2">
       <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
     </method>
