@@ -34,7 +34,7 @@ fn main() -> io::Result<()> {
     if to_result.is_ok() {
         to = to_result.unwrap();
     }
-    let mut lines = stdin.lines();
+    // let mut lines = stdin.lines();
     let re = Regex::new(&delimiter).unwrap();
 
     println!("delimiter: {}", delimiter);
@@ -47,13 +47,12 @@ fn main() -> io::Result<()> {
         let last_input = line.unwrap();
         let split = re.split(&last_input);
         for (i, e) in split.enumerate() {
-            if i < (from - 1) || i >= to {
-                continue;
+            if i >= from - 1 && i <= to - 1 {
+                print!("{}", e);
+                if i != to - 1 {
+                    print!("{}", replacement);
+                }
             }
-            if i != (from - 1) {
-                print!("{}", replacement);
-            }
-            print!("{}", e);
         }
         println!();
     }
