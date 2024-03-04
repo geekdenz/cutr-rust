@@ -1,7 +1,7 @@
+use std::io::{self, BufRead};
+
 use clap::Parser;
 use regex::Regex;
-
-use std::io::{self, BufRead};
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -25,7 +25,13 @@ fn main() -> io::Result<()> {
     let field = args.field;
     let from_to = field.split("-").collect::<Vec<_>>();
     let from_result = from_to[0].parse::<usize>();
-    let to_result = from_to[1].parse::<usize>();
+    let to_result =
+        if from_to.len() == 2 { from_to[1].parse::<usize>() }
+        else { from_result.clone() };
+    if from_result.is_err() && to_result.is_err() {
+        eprintln!("Invalid field: {}", field);
+        std::process::exit(1);
+    }
     let mut from: usize = 1;
     let mut to = usize::MAX;
     if from_result.is_ok() {
@@ -34,24 +40,17 @@ fn main() -> io::Result<()> {
     if to_result.is_ok() {
         to = to_result.unwrap();
     }
-    // let mut lines = stdin.lines();
     let re = Regex::new(&delimiter).unwrap();
 
-    println!("delimiter: {}", delimiter);
-    println!("replacement: {}", replacement);
-    println!("field: {}", field);
-    println!("from: {}", from);
-    println!("to: {}", to);
-    println!("from_to: {:?}", from_to);
     for line in stdin.lock().lines() {
         let last_input = line.unwrap();
         let split = re.split(&last_input);
         for (i, e) in split.enumerate() {
             if i >= from - 1 && i <= to - 1 {
-                print!("{}", e);
-                if i != to - 1 {
+                if i != from - 1 {
                     print!("{}", replacement);
                 }
+                print!("{}", e);
             }
         }
         println!();
