@@ -14,14 +14,17 @@ struct Cli {
     field: String,
     /// replace the delimiter with
     #[arg(short, long)]
-    replacement: String,
+    replacement: Option<String>,
 }
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
     let args = Cli::parse();
-    let delimiter = args.delimiter;
-    let replacement = args.replacement;
+    let mut delimiter = args.delimiter;
+    let replacement = match args.replacement {
+        Some(_) => true,
+        None => false,
+    };
     let field = args.field;
     let from_to = field.split("-").collect::<Vec<_>>();
     let from_result = from_to[0].parse::<usize>();
@@ -41,19 +44,29 @@ fn main() -> io::Result<()> {
         to = to_result.unwrap();
     }
     let re = Regex::new(&delimiter).unwrap();
+    // let replacement_is_null = replacement == null;
+    let replacement_string = args.replacement.unwrap_or_else(|| "".to_string());
 
     for line in stdin.lock().lines() {
         let last_input = line.unwrap();
-        let split = re.split(&last_input);
-        for (i, e) in split.enumerate() {
-            if i >= from - 1 && i <= to - 1 {
-                if i != from - 1 {
-                    print!("{}", replacement);
-                }
-                print!("{}", e);
-            }
-        }
+        process_line(&delimiter, replacement, &from, &to, &re, &replacement_string, &last_input);
         println!();
     }
     Ok(())
+}
+
+fn process_line(delimiter: &str, replacement: bool, from: &usize, to: &usize, re: &Regex, replacement_string: &str, last_input: &str) {
+    let split = re.split(&last_input);
+    for (i, e) in split.enumerate() {
+        if i >= from - 1 && i <= to - 1 {
+            if i != from - 1 {
+                if replacement {
+                    print!("{}", replacement_string);
+                } else {
+                    print!("{}", delimiter);
+                }
+            }
+            print!("{}", e);
+        }
+    }
 }
